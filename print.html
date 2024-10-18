@@ -205,7 +205,7 @@ extern &quot;C&quot; {
 <h2><a class="header" href="#clang" id="clang">Clang</a></h2>
 <p><code>bindgen</code> leverages <code>libclang</code> to preprocess, parse, and type check C and C++
 header files.</p>
-<p>It is required to use Clang 5.0 or greater.</p>
+<p>It is required to use Clang 9.0 or greater.</p>
 <h3><a class="header" href="#installing-clang" id="installing-clang">Installing Clang</a></h3>
 <h4><a class="header" href="#windows" id="windows">Windows</a></h4>
 <p>If you use winget:</p>
@@ -228,9 +228,9 @@ to <code>D:\programs\LLVM</code>, then you'd set the value to be <code>D:\progra
 <pre><code class="language-bash">$ port install clang
 </code></pre>
 <h4><a class="header" href="#debian-based-linuxes" id="debian-based-linuxes">Debian-based Linuxes</a></h4>
-<pre><code class="language-bash"># apt install llvm-dev libclang-dev clang
+<pre><code class="language-bash"># apt install libclang-dev
 </code></pre>
-<p>Ubuntu 18.04 provides the necessary packages directly.</p>
+<p>If you want to use the function <code>bindgen::Builder::dump_preprocessed_input</code>, then you also need the package <code>clang</code>.</p>
 <h4><a class="header" href="#arch" id="arch">Arch</a></h4>
 <pre><code class="language-bash"># pacman -S clang
 </code></pre>
@@ -331,7 +331,7 @@ fn main() {
         .header(&quot;wrapper.h&quot;)
         // Tell cargo to invalidate the built crate whenever any of the
         // included header files changed.
-        .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
+        .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         // Finish the builder and generate the bindings.
         .generate()
         // Unwrap the Result and panic on failure.
@@ -1611,6 +1611,7 @@ to add the feature line to your containing crate.</p>
 <li><a href="faq.html#does-bindgen-support-the-c-standard-template-library-stl">Does <code>bindgen</code> support the C++ Standard Template Library (STL)?</a></li>
 <li><a href="faq.html#how-to-deal-with-bindgen-generated-padding-fields">How to deal with bindgen generated padding fields?</a></li>
 <li><a href="faq.html#how-to-generate-bindings-for-a-custom-target">How to generate bindings for a custom target?</a></li>
+<li><a href="faq.html#why-isnt-bindgen-generating-documentation-for-system-headers">Why isn't <code>bindgen</code> generating documentation for system headers?</a></li>
 </ul>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 <h3><a class="header" href="#why-isnt-bindgen-generating-methods-for-this-allowlisted-class" id="why-isnt-bindgen-generating-methods-for-this-allowlisted-class">Why isn't <code>bindgen</code> generating methods for this allowlisted class?</a></h3>
@@ -1692,6 +1693,10 @@ like so:</p>
 </code></pre>
 <p>If you are using <code>bindgen</code> as a library, you should call
 <code>builder.clang_arg(&quot;--target=armv7a-none-eabi&quot;)</code> on your <code>builder</code>.</p>
+<h3><a class="header" href="#why-isnt-bindgen-generating-documentation-for-system-headers" id="why-isnt-bindgen-generating-documentation-for-system-headers">Why isn't <code>bindgen</code> generating documentation for system headers?</a></h3>
+<p>By default, Bindgen does not generate documentation for system headers because
+<code>libclang</code> does not provide this information. To address this, you should call
+<code>builder.clang_arg(&quot;-fretain-comments-from-system-headers&quot;)</code> on your <code>builder</code>.</p>
 
                     </main>
 
